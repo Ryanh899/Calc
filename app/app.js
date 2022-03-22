@@ -27,7 +27,7 @@ function blendedRate ( inputs ) {
 // console.log(blendedRate(test))
 
 // Test arr for totalInterest 
-// let test = [{principal: "10000", rate: "3.875", term: "60"}, {principal: "15000", rate: "3", term: "65"}, {principal: "25000", rate: "5", term: "75"}]
+let test = [{principal: "10000", rate: "3.875", term: "60"}, {principal: "15000", rate: "3", term: "65"}, {principal: "25000", rate: "5", term: "75"}]
 
 
 //Total Interest Calculator 
@@ -52,6 +52,9 @@ function totalInterest ( inputs ) {
         // add interest to obj 
         x.totalInterest = totalInt
 
+        // add monthly payment to obj 
+        x.monthlyPayment = total / x.term 
+
         // push data to track individual 
         individualData.push( x )
 
@@ -67,4 +70,17 @@ function totalInterest ( inputs ) {
 
 }
  
-// console.log(totalInterest(test))
+console.log(totalInterest(test))
+
+// Function to show p/l of all prior debts to all proposed debts 
+function profitLoss () {
+    // get individual data for all debts, seperate prior and proposed 
+    // calculate: total paid difference, total interest difference, monthly payment difference (if being paid through loan subtract all against 0)
+}
+
+
+// Function to show recoup period for closing costs 
+
+
+
+// Function to print data onto a nice proposal 
