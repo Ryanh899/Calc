@@ -27,6 +27,7 @@ function blendedRate ( inputs ) {
 // console.log(blendedRate(test))
 
 // Test arr for totalInterest 
+
 let test = [{principal: "100000", rate: "3.875", term: "360", type: 'installment'}, {principal: "100000", rate: "3.875", term: "360", type: 'revolving'}, {principal: "25000", rate: "5", term: "75", type: 'installment'}]
 let test1 = [{
     principal: '25000',
@@ -46,96 +47,208 @@ let test1 = [{
     term: '75',
 }]
 
+let test2 = [{
+    principal: '5000',
+    rate: '20',
+    term: '60',
+    type: 'revolving',
+    acct: '12345',
+    creditor: 'JPMCB',
+    minimumPayment: '150'
+}]
 
-//Total Interest Calculator 
+function getDays () {
+  const date = new Date()
+ 
+  return new Date(
+    date.getFullYear(),
+    date.getMonth() + 1,
+    0
+  ).getDate();
+ 
+}
+
+// function totalIntCompounding ( inputs ) {
+
+
+//     // inputs are creditor, principal, rate, term(months) in arr of objects  
+//     let totalPaidArr = []
+
+//     let individualData = []
+
+//     let totalInt = ''
+
+//     // map 
+
+//     // convert months to years
+//     let term = parseFloat(x.term/12);
+//     // turn balance into number 
+//     let balance = parseFloat(x.principal)
+//     // turn rate into decimal number 
+//     let rate = parseFloat(x.rate/100)
+//     // compounding daily 
+//     let days = 12
+//     // get minimum paymnet 
+//     let payment = parseFloat(x.minimumPayment)
+   
+ 
+//     // calculations for compound interest formula             
+//     let nt = term * days 
+//     let rd = rate / days
+
+//     // plug into formula
+//     let totalPaid = Math.pow( (1 + rd), nt )
+//     // finish formula by multiplying by balance 
+//     totalPaid = balance * totalPaid
+
+//     // add total paid to obj and arr 
+//     let total = totalPaid
+//     totalPaidArr.push(total)
+//     x.totalPaid = total
+
+//     // subtract total from principal to find interest
+//     totalInt = totalPaid - x.principal
+//     console.log(totalInt)
+
+//     // add interest to obj
+//     x.totalInterest = totalInt
+
+//     // push data to track individual
+//     individualData.push( x )
+// }
+
+//Total Interest Calculator
+
+
 function totalInterest ( inputs ) {
-    // inputs are creditor, principal, rate, term(months) in arr of objects  
+    // inputs are [creditor, principal, rate, term(months), type, min payment]   
     let totalPaidArr = []
-
-    let monthlyPayments = []
 
     let individualData = []
 
     let totalInt = ''
 
-    // for each debt passed 
+    // for each debt passed
     let interestForEach = inputs.map(x => {
 
-        // check if simple or compound interest 
+        // check if simple or compound interest
         if ( x.type !== 'revolving') {
 
-            // convert months to years 
-            let term = parseFloat(x.term/12); 
-            console.log(term)
+            // convert months to years
+            let term = parseFloat(x.term/12);
+            console.log('term: ' + term)
             // Total Principal and Interest = Principal(1 + rate * term)
             let total = x.principal*(1 + (x.rate/100)*term)
-            console.log(total)
-            // add total paid to obj 
-            x.totalPaid = total 
+            console.log('total: ' + total)
+            // add total paid to obj
+            x.totalPaid = total
             totalPaidArr.push(total)
 
-            // subtract total from principal to find interest 
-            totalInt = total - x.principal 
+            // subtract total from principal to find interest
+            totalInt = total - x.principal
 
-            // add interest to obj 
+            // add interest to obj
             x.totalInterest = totalInt
-
-            let rate = parseFloat(x.rate)
-            x.term = parseFloat(x.term)
+         
+            console.log('rate: '+ (x.rate))
+            let rate = parseFloat(x.rate / 100 / 12)
+            console.log('rate: ', rate)
+         
+           term = parseFloat(x.term)
+         
             let principal = parseFloat(x.principal)
-
-            // add monthly payment to obj 
-            let monthlyPayment = ((x.rate * (Math.pow((1 + rate), x.term))) / (Math.pow((1 + rate), x.term)-1))
-            monthlyPayment = monthlyPayment * principal
-            console.log(monthlyPayment)
-            monthlyPayments.push( x.monthlyPayment * 12 * term )
-
-            // push data to track individual 
+            console.log('term: ', term)
+             
+           
+            let z = Math.pow(1 + rate, x.term)
+           
+            let monthlyPayment = parseFloat((principal*z*rate)/(z-1)).toFixed(2)
+            x.monthlyPayment = monthlyPayment
+           
+            // push data to track individual
             individualData.push( x )
 
         } else {
 
-            // convert months to years 
-            let term = parseFloat(x.term/12); 
-            console.log(term)
-            // Total Principal and Interest = Principal(1 + rate * term)
-            let total = x.principal*(1 + (x.rate/100)*term)
-            console.log(total)
-            // add total paid to obj 
-            x.totalPaid = total 
+            // convert months to years
+            let term = parseFloat(x.term/12);
+            // turn balance into number 
+            let balance = parseFloat(x.principal)
+            // turn rate into decimal number 
+            let rate = parseFloat(x.rate/100)
+            // compounding daily 
+            let compinPeriod = 12
+            let n = 365
+            // get minimum paymnet 
+            let payment = parseFloat(x.minimumPayment)
+           
+         
+            // calculations for compound interest formula     
+            // n/t         
+            let nt = term * compinPeriod 
+            // r/n
+            let rd = rate / compinPeriod
+            // p 
+            let p = compinPeriod / n
+
+            console.log(p)
+
+            // plug into formula
+            let totalPaid = Math.pow( (1 + rd), nt )
+            // finish formula by multiplying by balance 
+            totalPaid = balance * totalPaid
+
+            
+            let withPayments = Math.pow( (1 + rd), nt ) - 1
+
+            console.log('withPayments: ', withPayments) 
+            
+            withPayments = withPayments / rd 
+
+            console.log('withPayments: ', withPayments) 
+
+            // pmt x p 
+            let pmtp = payment * p
+
+            console.log('pmtp: ', pmtp) 
+
+
+            withPayments = pmtp * withPayments 
+
+            console.log('withPayments: ', withPayments) 
+
+
+            // add total paid to obj and arr 
+            let total = totalPaid
             totalPaidArr.push(total)
+            x.totalPaid = total
 
-            // subtract total from principal to find interest 
-            totalInt = total - x.principal 
+            // subtract total from principal to find interest
+            totalInt = totalPaid - x.principal
+            console.log(totalInt)
 
-            // add interest to obj 
+            // add interest to obj
             x.totalInterest = totalInt
 
-            console.log(total, x.term)
-            // add monthly payment to obj 
-            x.monthlyPayment = total / x.term 
-            console.log(x.monthlyPayment)
-            monthlyPayments.push( x.monthlyPayment * (x.term*12) )
-
-            // push data to track individual 
+            // push data to track individual
             individualData.push( x )
 
         }
 
 
-        return totalInt; 
+        return totalInt;
     })
 
-    // add interest on all accounts 
+    // add interest on all accounts
     let totalInterestPaid = interestForEach.reduce((a, b) => a + b, 0)
-    let totalMonthlyPayments = monthlyPayments.reduce((a,b) => a + b, 0)
     let totalPaid = totalPaidArr.reduce((a,b) => a + b, 0)
 
-    return { totalInterestPaid , totalMonthlyPayments, totalPaid, individualData} 
+    return { totalInterestPaid, totalPaid, individualData }
 
 }
- 
-console.log(totalInterest(test))
+
+console.log(totalInterest(test2))
+
 
 // let test = {
 //   totalInterestPaid: 12187.5,
